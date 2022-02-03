@@ -100,7 +100,7 @@ def help_message(message):
            '\n \n Для начала игры просто нажми на кнопку Рулетка или напиши в чат с помощью клавиатуры. ' \
            '\n      По умолчанию ставка ' \
            'равна 5💸. \n Для изменения ставки напиши в чат Рулетка [размер ставки]'
-    bot.send_message(message.chat.id, text)
+    bot.send_message(message.chat.id, text, reply_markup=main_keyboard())
 
 
 @bot.callback_query_handler(func=lambda call: True)  # Обработка запросов от моих клавиатур
@@ -128,12 +128,14 @@ def callback_inline(call):
             if win:
                 bot.send_message(call.message.chat.id,
                                  f"Выпало число - {random_bid}{color}; {call.from_user.first_name} везунчик!"
-                                 f"\n \n Твой выигрыш = {bet * k}💸. Баланс = {user_info + bet * k}💲")
+                                 f"\n \n Твой выигрыш = {bet * k}💸. Баланс = {user_info + bet * k}💲",
+                                 reply_markup=main_keyboard())
 
             else:
                 bot.send_message(call.message.chat.id,
                                  f"Выпало число - {random_bid}{color}; {call.from_user.first_name} лошок :("
-                                 f"\n \nТы проиграл = {bet}💸. Баланс = {user_info - bet}💲")
+                                 f"\n \nТы проиграл = {bet}💸. Баланс = {user_info - bet}💲",
+                                 reply_markup=main_keyboard())
 
         if len(data) == 2:
             users_bid = int(data)
@@ -187,7 +189,7 @@ def game_roullete(message):
             try:
                 bet = abs(int(message.text[7:]))
             except ValueError:
-                et = 5
+                bet = 5
         else:
             bet = 5
 
@@ -233,7 +235,7 @@ def game_roullete(message):
             delta = 64800 - delta
             bot.send_message(message.chat.id, f"Ты можешь каждый день получать бонус 50💸. \n"
                                               f"Осталось подождать:"
-                                              f"\n {'  '* 20}{delta // 3600}ч {(delta // 60) % 60}м {delta % 60}с")
+                                              f"\n {'  '* 10}{delta // 3600}ч {(delta // 60) % 60}м {delta % 60}с")
         else:
             user_info = SQL_request(f"SELECT money FROM users WHERE id={id}")
             SQL_request(f"UPDATE users SET money = {user_info + 50} WHERE id = {id}", ret_info=False)
